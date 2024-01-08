@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import home,post,retrieve,delete
+from .views import vehicles,add_vehicle,retrieve,delete
+app_name="service"
 urlpatterns=[
-    path('api',post,name='post'),
-    path('home',home),
+    path('add-vehicle',add_vehicle,name='add-vehicle'),
+    path('get-vehicles',vehicles),
     path('<int:pk>',retrieve),
     path('delete/<int:pk>',delete),
 ]

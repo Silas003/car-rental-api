@@ -11,33 +11,52 @@ from rest_framework import status
 
 
 @api_view(['GET','POST'])
-def home(request : Request):
+def vehicles(request : Request):
     if request.method=="GET":
-        try:
-            if request.query_params:
-                brand=request.query_params['car_brand']
-                car=Carspec.objects.get(car_brand=brand)
-                serializer=CarSerializer(car)
-                return Response(serializer.data) 
-        except AttributeError as e:
-            print(e)
-        serializer=CarSerializer(Carspec.objects.all(),many=True)    
-        return Response(serializer.data)
-    if request.method=="POST":
-        if request.data:
-            data=request.data
-            print("not bad")
-            return Response({"new_ message":data})
-        else:
-            print("you suck")
+
+
+        # try:
+        #     if request.query_params:
+        #         brand=request.query_params['car_brand']
+        #         car=Carspec.objects.get(car_brand=brand)
+        #         serializer=CarSerializer(car)
+        #         return Response(serializer.data) 
+        # except AttributeError as e:
+        #     print(e)
+        
+        
+        for auth in Carspec.objects.all():
+            car_booking = auth.books.all()
+
+        # Check if any booking has status "Reserved"
+            if any(book.status == "Reserved" for book in car_booking):
+                auth.status = "Unavailable"
+            else:
+                auth.status = "Available"
+
+            auth.save()
+
+    # Serialize the updated data after the loop
+    serializer = CarSerializer(Carspec.objects.all(), many=True)
+    return Response(serializer.data,status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
-def post(request:Request):
+def add_vehicle(request:Request):
     data=request.data
-    #print(data)
-    car=Carspec.objects.create(car_brand=data['car_brand'],car_model=data['car_model'])
+    
+    car=Carspec.objects.create(
+        car_brand=data['car_brand'],
+        car_model=data['car_model'],
+        production_year=data['production_year'],
+        mileage=data['mileage'],
+        color=data['color'],
+        fuel_type=data['fuel_type'],
+        transmission_type=data['transmission_type'],
+        status=data['status'],
+        DV_Number=data['DV_Number'])
     car.save()
-    print(car)
+    
     serializer=CarSerializer(car)
     return Response(serializer.data,status=status.HTTP_201_CREATED)
 
@@ -52,9 +71,16 @@ def retrieve(request:Request,pk):
         print(data)  
         car.car_brand=data['car_brand'] 
         car.car_model=data['car_model']
+        car.production_year=data['production_year']
+        car.mileage=data['mileage']
+        car.color=data['color']
+        car.fuel_type=data['fuel_type']
+        car.transmission_type=data['transmission_type']
+        car.status=data['status']
+        car.DV_Number=data['DV_Number']
         car.save()
         serializer=CarSerializer(car)
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_201_CREATED)
    
     serializer=CarSerializer(car)
     return Response(serializer.data)
@@ -64,6 +90,6 @@ def delete(request:Request,pk):
     car=Carspec.objects.get(id=pk)
     if request.method=="DELETE":    
         car.delete()
-        return Response({"message":"car deleted"},status=status.HTTP_204_NO_CONTENT)
+        return Response({"message":"vehicle removed from inventory successfully"},status=status.HTTP_204_NO_CONTENT)
     serializer=CarSerializer(car)
     return Response(serializer.data)

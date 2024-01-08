@@ -1,11 +1,26 @@
 from rest_framework import serializers
-from .models import Carspec
+from .models import Carspec,Client,Reviews
 
 class CarSerializer(serializers.ModelSerializer):
-    #url=serializers.SerializerMethodField(read_only=True)
+    
     class Meta:
         model=Carspec
-        fields=['car_brand','car_model','car_body']
+        fields='__all__'
+
+
+
+class ClientSerializer(serializers.ModelSerializer):
     
-    # def get_url(self,obj):
-    #     return f"localhost:8000/{obj.id}"
+    class Meta:
+        model=Client
+        fields='__all__'
+    
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Reviews
+        fields='__all__'
+    
+
