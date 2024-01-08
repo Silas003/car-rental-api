@@ -49,7 +49,7 @@ class Client(models.Model):
     phone=models.CharField(unique=True,max_length=14)
     client_Id_type=models.CharField(max_length=100,choices=id_choices)
     client_id=models.CharField(max_length=100)
-    address=models.SlugField()
+    address=models.CharField(max_length=100)
     photo=models.ImageField(upload_to='client_images')
     
     def __str__(self):
@@ -64,7 +64,7 @@ class Booking(models.Model):
     status=models.CharField(max_length=100,choices=booking_status_choice)
 
 
-class Reviews(models.Model): 
-    user_id=models.ForeignKey(Client,on_delete=models.PROTECT)
-    car_id=models.ForeignKey(Carspec,on_delete=models.PROTECT)
+class Reviews(models.Model):
+    user_id=models.ForeignKey(Client,on_delete=models.DO_NOTHING)
+    car_id=models.ForeignKey(Carspec,on_delete=models.DO_NOTHING)
     review=models.TextField(max_length=1000)

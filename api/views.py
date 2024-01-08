@@ -1,17 +1,17 @@
 
-from .models import Carspec
+from .models import Carspec,Client,Booking,Reviews
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import JsonResponse
-
-from .serializer import CarSerializer
+from rest_framework import viewsets
+from .serializer import CarSerializer,ClientSerializer,ReviewSerializer,Booking,BookingSerializer
 from rest_framework import status
 # Create your views here.
 
 
 @api_view(['GET','POST'])
-def vehicles(request : Request):
+def list_vehicles(request : Request):
     if request.method=="GET":
 
 
@@ -63,7 +63,7 @@ def add_vehicle(request:Request):
 
 
 @api_view(['PUT','GET'])
-def retrieve(request:Request,pk):
+def retrieve_vehicle(request:Request,pk):
 
     car=Carspec.objects.get(id=pk)
     data=request.data 
@@ -86,10 +86,20 @@ def retrieve(request:Request,pk):
     return Response(serializer.data)
 
 @api_view(['GET','DELETE'])
-def delete(request:Request,pk):
+def delete_vehicle(request:Request,pk):
     car=Carspec.objects.get(id=pk)
     if request.method=="DELETE":    
         car.delete()
         return Response({"message":"vehicle removed from inventory successfully"},status=status.HTTP_204_NO_CONTENT)
     serializer=CarSerializer(car)
     return Response(serializer.data)
+
+
+class ClientViewset(viewsets.ModelViewSet):
+    serializer_class=ClientSerializer
+    queryset=Client.objects.all()
+
+
+class ReviewViewset(viewsets.ModelViewSet):
+    serializer_class=ReviewSerializer
+    queryset=Reviews.objects.all()

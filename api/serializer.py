@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Carspec,Client,Reviews
+from .models import Carspec,Client,Reviews,Booking
 
 class CarSerializer(serializers.ModelSerializer):
     
@@ -16,9 +16,14 @@ class ClientSerializer(serializers.ModelSerializer):
         fields='__all__'
     
 
+class BookingSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model=Booking
+        fields='__all__'
 
 class ReviewSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model=Reviews
         fields='__all__'
