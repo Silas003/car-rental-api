@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import list_vehicles,add_vehicle,retrieve_vehicle,delete_vehicle,ClientViewset,ReviewViewset
+from .views import list_vehicles,add_vehicle,retrieve_vehicle,delete_vehicle,ClientViewset,ReviewViewset,BookingViewset
 from rest_framework import routers
 
 
@@ -15,5 +15,6 @@ urlpatterns=[
 router=routers.DefaultRouter()
 router.register("client",ClientViewset,basename='client')
 router.register("reviews",ReviewViewset,basename='reviews')
+router.register("booking",BookingViewset,basename='booking')
 
 urlpatterns+=router.urls
