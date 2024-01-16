@@ -1,39 +1,50 @@
 
 from .models import Carspec,Client,Booking,Reviews
 from rest_framework.decorators import api_view,permission_classes
+from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import viewsets
 from .serializer import CarSerializer,ClientSerializer,ReviewSerializer,Booking,BookingSerializer
 from rest_framework import status
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.views import LoginView
+from drf_yasg.utils import swagger_auto_schema
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
 
+def send_html_email_view(request:Request):
+    books=Booking.objects.all()
+    for user in books:
+        
+        if user.end_date-user.start_date:
+            # print('its not deadline yet')
+            # print(user.client.email,user.end_date-user.start_date)
+            continue
+        else:
+            
+            subject = 'Car Rental Deadline'
+            body = f'Dear {user.client}, we wish to inform you the deadline of your booking'
+            from_email = 'silaskumi4@gmail.com'
+            to_email = [user.client.email]
 
-# from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-# from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-# from rest_auth.registration.views import SocialLoginView
+            email = EmailMessage(subject, body, from_email, to_email)
+            email.content_subtype = 'html'  # Set the content type to HTML
+            email.send()
 
-# class GoogleLogin(SocialLoginView):
-#     adapter_class = GoogleOAuth2Adapter
-#     client_class = OAuth2Client
-
+    return HttpResponse("HTML Email sent successfully.")
+class GoogleLogin(LoginView):
+    adapter_class = GoogleOAuth2Adapter
+    client_class = OAuth2Client
 
 
 @api_view(['GET','POST'])
+@swagger_auto_schema()
 def list_vehicles(request : Request):
+    
     if request.method=="GET":
-
-
-        # try:
-        #     if request.query_params:
-        #         brand=request.query_params['car_brand']
-        #         car=Carspec.objects.get(car_brand=brand)
-        #         serializer=CarSerializer(car)
-        #         return Response(serializer.data) 
-        # except AttributeError as e:
-        #     print(e)
-        
-        
         for auth in Carspec.objects.all():
             car_booking = auth.books.all()
 
@@ -49,8 +60,9 @@ def list_vehicles(request : Request):
     serializer = CarSerializer(Carspec.objects.all(), many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema()
 @api_view(['POST'])
+@permission_classes([permissions.IsAdminUser])
 def add_vehicle(request:Request):
     data=request.data
     
@@ -70,7 +82,7 @@ def add_vehicle(request:Request):
     return Response(serializer.data,status=status.HTTP_201_CREATED)
 
 
-
+@swagger_auto_schema()
 @api_view(['PUT','GET'])
 def retrieve_vehicle(request:Request,pk):
 
@@ -94,6 +106,9 @@ def retrieve_vehicle(request:Request,pk):
     serializer=CarSerializer(car)
     return Response(serializer.data)
 
+
+@permission_classes([permissions.IsAdminUser])
+@swagger_auto_schema()
 @api_view(['GET','DELETE'])
 def delete_vehicle(request:Request,pk):
     car=Carspec.objects.get(id=pk)

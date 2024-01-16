@@ -34,19 +34,13 @@ INSTALLED_APPS = [
     "corsheaders",
     'drf_yasg',
     'rest_framework_simplejwt',
-       'oauth2_provider',
-    'social_django',
-    'drf_social_oauth2',
-     'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'dj_rest_auth',
+    'allauth',
+    'management'  
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':[
-            'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
   
     'DEFAULT_AUTHENTICATION_CLASSES': ( 
@@ -57,11 +51,7 @@ REST_FRAMEWORK = {
 
 SITE_ID = 1  # Required for django-allauth
 
-AUTHENTICATION_BACKENDS = (
-    # ...
-    'allauth.account.auth_backends.AuthenticationBackend',
-    # ...
-)
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -163,3 +153,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'management.CustomUser'
+
+
+
+# settings.py
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_PORT = 2525
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '105296ab8b93ce'
+EMAIL_HOST_PASSWORD = 'f1ac014238eccf'

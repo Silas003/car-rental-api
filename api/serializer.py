@@ -35,6 +35,8 @@ class BookingSerializer(serializers.ModelSerializer):
         if len(obj.client.other_name) > 1:
             return f"{obj.client.second_name.upper()},{obj.client.first_name} {obj.client.other_name}"
         return f"{obj.client.second_name.upper()},{obj.client.first_name}"
+    
+    
 class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
