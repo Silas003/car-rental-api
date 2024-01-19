@@ -2,7 +2,7 @@ from .models import CustomUser
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth.models import User
+
 
 class UserRegSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,15 +51,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
-
-        # print(attrs)
-
-        # user_data = {
-        #     "user_id":user.id,
-        #     "username":user.username
-        # }
-
-        # token_data["user"] = user_data
 
         return token_data
     
