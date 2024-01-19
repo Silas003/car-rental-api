@@ -8,14 +8,15 @@ from django.http import JsonResponse
 from rest_framework import viewsets
 from .serializer import CarSerializer,ClientSerializer,ReviewSerializer,Booking,BookingSerializer
 from rest_framework import status
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from dj_rest_auth.views import LoginView
 from drf_yasg.utils import swagger_auto_schema
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
+
+
 
 def send_html_email_view(request:Request):
+    
     books=Booking.objects.all()
     for user in books:
         
@@ -35,15 +36,15 @@ def send_html_email_view(request:Request):
             email.send()
 
     return HttpResponse("HTML Email sent successfully.")
-class GoogleLogin(LoginView):
-    adapter_class = GoogleOAuth2Adapter
-    client_class = OAuth2Client
-
 
 @api_view(['GET','POST'])
 @swagger_auto_schema()
 def list_vehicles(request : Request):
-    
+    car_brand=request.query_params.get('car_brand')
+    car_model=request.query_params.get('car_model')
+    prod_year=request.query_params.get('prod_year')
+    search=request.query_params.get('search')
+   
     if request.method=="GET":
         for auth in Carspec.objects.all():
             car_booking = auth.books.all()
@@ -57,8 +58,26 @@ def list_vehicles(request : Request):
             auth.save()
 
     # Serialize the updated data after the loop
+    filter_params = {}
+    if car_brand:
+        filter_params['car_brand'] = car_brand
+    if car_model:
+        filter_params['car_model'] = car_model
+    if prod_year:
+        filter_params['production_year'] = prod_year
+
+    filtered_list = Carspec.objects.filter(**filter_params)
+    if car_brand or car_model or prod_year:
+        serializer=CarSerializer(filtered_list,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    if search:
+        searched_list=Carspec.objects.filter(car_brand__icontains=search)
+        serializer=CarSerializer(searched_list,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
     serializer = CarSerializer(Carspec.objects.all(), many=True)
     return Response(serializer.data,status=status.HTTP_200_OK)
+
 
 @swagger_auto_schema()
 @api_view(['POST'])
@@ -121,14 +140,18 @@ def delete_vehicle(request:Request,pk):
 
 class ClientViewset(viewsets.ModelViewSet):
     serializer_class=ClientSerializer
+    #permission_classes=[permissions.IsAuthenticatedOrReadOnly]
     queryset=Client.objects.all()
-
+    filter_backends=[DjangoFilterBackend]
+    filterset_fields=['first_name','second_name','phone']
 
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class=ReviewSerializer
     queryset=Reviews.objects.all()
-
+    
 
 class BookingViewset(viewsets.ModelViewSet):
     serializer_class=BookingSerializer
     queryset=Booking.objects.all()
+    filter_backends=[DjangoFilterBackend]
+    filterset_fields=['car_info','status','start_date']

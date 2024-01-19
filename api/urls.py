@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import list_vehicles,add_vehicle,retrieve_vehicle,delete_vehicle,ClientViewset,ReviewViewset,BookingViewset,GoogleLogin,send_html_email_view
+from .views import list_vehicles,add_vehicle,retrieve_vehicle,delete_vehicle,ClientViewset,ReviewViewset,BookingViewset,send_html_email_view
 from rest_framework import routers
 
 
@@ -10,7 +10,6 @@ urlpatterns=[
     path('list-vehicles',list_vehicles),
     path('<int:pk>',retrieve_vehicle),
     path('delete/<int:pk>',delete_vehicle),
-    path('auth/social/google/', GoogleLogin.as_view(), name='google_login'),
     
 ]
 
