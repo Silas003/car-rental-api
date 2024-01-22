@@ -4,7 +4,6 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework import permissions
 from rest_framework.request import Request
 from rest_framework.response import Response
-from django.http import JsonResponse
 from rest_framework import viewsets
 from .serializer import CarSerializer,ClientSerializer,ReviewSerializer,Booking,BookingSerializer
 from rest_framework import status
@@ -12,30 +11,32 @@ from drf_yasg.utils import swagger_auto_schema
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-
+from .tasks import send_mail_func
 
 
 def send_html_email_view(request:Request):
     
-    books=Booking.objects.all()
-    for user in books:
+
+    send_mail_func.delay()
+    # books=Booking.objects.all()
+    # for user in books:
         
-        if user.end_date-user.start_date:
-            # print('its not deadline yet')
-            # print(user.client.email,user.end_date-user.start_date)
-            continue
-        else:
+    #     if user.end_date-user.start_date:
+    #         # print('its not deadline yet')
+    #         # print(user.client.email,user.end_date-user.start_date)
+    #         continue
+    #     else:
             
-            subject = 'Car Rental Deadline'
-            body = f'Dear {user.client}, we wish to inform you the deadline of your booking'
-            from_email = 'silaskumi4@gmail.com'
-            to_email = [user.client.email]
+    #         subject = 'Car Rental Deadline'
+    #         body = f'Dear {user.client}, we wish to inform you the deadline of your booking'
+    #         from_email = 'silaskumi4@gmail.com'
+    #         to_email = [user.client.email]
 
-            email = EmailMessage(subject, body, from_email, to_email)
-            email.content_subtype = 'html'  # Set the content type to HTML
-            email.send()
+    #         email = EmailMessage(subject, body, from_email, to_email)
+    #         email.content_subtype = 'html'  # Set the content type to HTML
+    #         email.send()
 
-    return HttpResponse("HTML Email sent successfully.")
+    return HttpResponse("Email delivered.")
 
 @api_view(['GET','POST'])
 @swagger_auto_schema()

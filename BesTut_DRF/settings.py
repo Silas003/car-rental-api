@@ -43,6 +43,9 @@ INSTALLED_APPS = [
     'management',
     'django_filters',
     'oauth2_provider',
+    'django_celery_results',
+    'django_celery_beat',
+    'celery'
 
 ]
 
@@ -173,11 +176,24 @@ AUTH_USER_MODEL = 'management.CustomUser'
 
 
 
-# settings.py
 
+#email smtp settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_PORT = 2525
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS=True
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = '105296ab8b93ce'
-EMAIL_HOST_PASSWORD = 'f1ac014238eccf'
+EMAIL_HOST_USER = 'kumideveloper@gmail.com'
+EMAIL_HOST_PASSWORD = 'lbitcfdimdnvoaxw'
+DEFAULT_FROM_EMAIL = 'CarRentalsupport@gmail.com'
+
+#celery config
+CELERY_BROKER_URL='redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT=['application/json']
+CELERY_RESULT_SERIALIZER='json'
+CELERY_TASK_SERIALIZER='json'
+CELERY_TIMEZONE='Africa/Accra '
+CELERY_RESULT_BACKEND='django-db'
+
+#celery beat config
+CELERY_BEAT_SCHEDULER='django_celery_beat.schedulers:DatabaseScheduler'
