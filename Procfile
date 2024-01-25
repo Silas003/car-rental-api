@@ -1,0 +1,1 @@
+web : gunicorn BesTut_DRF.wsgi --log-file

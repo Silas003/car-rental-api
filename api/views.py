@@ -18,23 +18,6 @@ def send_html_email_view(request:Request):
     
 
     send_mail_func.delay()
-    # books=Booking.objects.all()
-    # for user in books:
-        
-    #     if user.end_date-user.start_date:
-    #         # print('its not deadline yet')
-    #         # print(user.client.email,user.end_date-user.start_date)
-    #         continue
-    #     else:
-            
-    #         subject = 'Car Rental Deadline'
-    #         body = f'Dear {user.client}, we wish to inform you the deadline of your booking'
-    #         from_email = 'silaskumi4@gmail.com'
-    #         to_email = [user.client.email]
-
-    #         email = EmailMessage(subject, body, from_email, to_email)
-    #         email.content_subtype = 'html'  # Set the content type to HTML
-    #         email.send()
 
     return HttpResponse("Email delivered.")
 
