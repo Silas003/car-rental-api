@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
     
 class UserRegViewSet(viewsets.ModelViewSet):
     serializer_class=UserRegSerializer
+    permission_classes=[AllowAny]
     queryset=CustomUser.objects.all()
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -36,7 +37,10 @@ def UserRegView(request:Response):
                     "message":f'account created successfully for {email}',
                     
                 },status=status.HTTP_201_CREATED)
-
+            else:
+                return serializer.errors
+            
+            
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def UserLoginView(request:Request):

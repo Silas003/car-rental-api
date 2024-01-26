@@ -7,7 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class UserRegSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'first_name', 'last_name', 'password', 'is_superuser']
+        fields = ['email', 'username', 'first_name', 'last_name', 'password', ]
         ordering = ('-email')
 
     def validate(self, attrs):
