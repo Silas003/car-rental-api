@@ -9,12 +9,16 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.conf import settings
 from django.contrib.auth.models import User
-    
+from drf_yasg.utils import swagger_auto_schema
+
+
 class UserRegViewSet(viewsets.ModelViewSet):
     serializer_class=UserRegSerializer
     permission_classes=[AllowAny]
     queryset=CustomUser.objects.all()
 
+
+@swagger_auto_schema(method='POST', request_body=UserRegSerializer)
 @method_decorator(csrf_exempt, name='dispatch')
 @permission_classes([AllowAny])
 @api_view(['POST'])
@@ -40,7 +44,8 @@ def UserRegView(request:Response):
             else:
                 return serializer.errors
             
-            
+
+@swagger_auto_schema(method='POST', request_body=UserLoginSerializer)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def UserLoginView(request:Request):
