@@ -10,7 +10,7 @@ def send_mail_func(self):
             subject='Nck Car Rental Notice'
             message=f"Dear valued customer,Please be notified your rental is due and you're obliged to info management if there are any last minute changes"
             from_email='kumideveloper@gmail.com'
-            to_email=[book.client.email]
+            to_email=['silaskumi4@gmail.com','kumideveloper@gmail.com']
             email=EmailMessage(
                 subject,message,from_email,to_email
             )

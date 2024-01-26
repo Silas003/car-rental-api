@@ -16,7 +16,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule={
         'send-mail-everyday-at-22':{
             'task':'api.tasks.send_mail_func',
-            'schedule':crontab(hour=22,minute=47)
+            'schedule':crontab(hour=2,minute=45)
         },
     }
 
